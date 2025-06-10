@@ -1,6 +1,7 @@
 package com.example.loganalyzer.batch;
 
 import com.example.loganalyzer.model.LogEntry;
+import com.example.loganalyzer.repository.LogEntryRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -34,6 +35,14 @@ public class BatchConfig {
                 .reader(reader)
                 .writer(writer)
                 .build();
+    }
+
+    @Bean
+    public RepositoryItemWriter<LogEntry> writer(LogEntryRepository repository) {
+        RepositoryItemWriter<LogEntry> writer = new RepositoryItemWriter<>();
+        writer.setRepository(repository);
+        writer.setMethodName("save");
+        return writer;
     }
 
 }
