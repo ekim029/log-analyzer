@@ -1,13 +1,18 @@
 package com.example.loganalyzer.batch;
 
+import com.example.loganalyzer.model.LogEntry;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.data.RepositoryItemWriter;
+import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @EnableBatchProcessing
@@ -18,6 +23,15 @@ public class BatchConfig {
         return new JobBuilder("logProcessingJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(logFileStep)
+                .build();
+    }
+
+    public Step logFileStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
+                            FlatFileItemReader<LogEntry> reader, RepositoryItemWriter<LogEntry> writer) {
+        return new StepBuilder("log-file-step", jobRepository)
+                .<LogEntry, LogEntry>chunk(100, transactionManager)
+                .reader(reader)
+                .writer(writer)
                 .build();
     }
 
