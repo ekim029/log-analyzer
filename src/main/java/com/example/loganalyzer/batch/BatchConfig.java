@@ -26,6 +26,7 @@ public class BatchConfig {
                 .build();
     }
 
+    @Bean
     public Step logFileStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
                             FlatFileItemReader<LogEntry> reader, RepositoryItemWriter<LogEntry> writer) {
         return new StepBuilder("log-file-step", jobRepository)
