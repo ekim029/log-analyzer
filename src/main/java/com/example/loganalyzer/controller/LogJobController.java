@@ -1,33 +1,45 @@
 package com.example.loganalyzer.controller;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 @RestController
 @RequestMapping("/batch")
 public class LogJobController {
+    @Autowired
     private JobLauncher jobLauncher;
-    private Job logProcessingJob;
 
     @Autowired
-    public LogJobController(JobLauncher jobLauncher, Job logProcessingJob) {
-        this.jobLauncher = jobLauncher;
-        this.logProcessingJob = logProcessingJob;
-    }
+    private Job logProcessingJob;
 
-    @PostMapping("/run")
-    public String runJob() {
+    @PostMapping("/upload")
+    public String runJob(@RequestParam("file") MultipartFile file) {
         try {
+            File fileDir = new File("logs");
+            if (!fileDir.exists()) {
+                fileDir.mkdirs();
+            }
+
+            File tempFile = new File(fileDir, file.getOriginalFilename());
+            file.transferTo(tempFile);
+
             JobParameters params = new JobParametersBuilder()
+                    .addString("filepath", tempFile.getAbsolutePath())
                     .addLong("timestamp", System.currentTimeMillis())
                     .toJobParameters();
-            jobLauncher.run(logProcessingJob, params);
+
+            JobExecution execute = jobLauncher.run(logProcessingJob, params);
+            if (execute.getStatus() == BatchStatus.COMPLETED) {
+                tempFile.delete();
+            }
             return "Batch started";
         } catch (Exception e) {
             return "Batch failed: " + e.getMessage();
