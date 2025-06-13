@@ -23,11 +23,10 @@ public class LogJobController {
     @PostMapping("/upload")
     public String runJob(@RequestParam("file") MultipartFile file) {
         try {
-            File fileDir = new File("logs");
+            File fileDir = new File(System.getProperty("user.dir"),"logs");
             if (!fileDir.exists()) {
                 fileDir.mkdirs();
             }
-
             File tempFile = new File(fileDir, file.getOriginalFilename());
             file.transferTo(tempFile);
 
