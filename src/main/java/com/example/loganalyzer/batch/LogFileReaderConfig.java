@@ -2,8 +2,9 @@ package com.example.loganalyzer.batch;
 
 
 import com.example.loganalyzer.model.LogEntry;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -12,11 +13,11 @@ import org.springframework.core.io.FileSystemResource;
 public class LogFileReaderConfig {
 
     @Bean
-    public FlatFileItemReader<LogEntry> logFileItemReader() {
-        return new FlatFileItemReaderBuilder<LogEntry>()
-                .name("logFileItemReader")
-                .resource(new FileSystemResource("logs/server-log.txt"))
-                .lineMapper(new LogLineMapper())
-                .build();
+    @StepScope
+    public FlatFileItemReader<LogEntry> logFileItemReader(@Value("#{jobParameters['filepath']}") String filepath) {
+        FlatFileItemReader<LogEntry> reader = new FlatFileItemReader<>();
+        reader.setResource(new FileSystemResource(filepath));
+        reader.setLineMapper(new LogLineMapper());
+        return reader;
     }
 }
