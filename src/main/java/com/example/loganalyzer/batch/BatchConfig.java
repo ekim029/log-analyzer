@@ -29,12 +29,18 @@ public class BatchConfig {
 
     @Bean
     public Step logFileStep(JobRepository jobRepository, PlatformTransactionManager transactionManager,
-                            FlatFileItemReader<LogEntry> reader, RepositoryItemWriter<LogEntry> writer) {
+                            FlatFileItemReader<LogEntry> reader, LogEntryProcessor logEntryProcessor, RepositoryItemWriter<LogEntry> writer) {
         return new StepBuilder("log-file-step", jobRepository)
                 .<LogEntry, LogEntry>chunk(100, transactionManager)
                 .reader(reader)
+                .processor(logEntryProcessor)
                 .writer(writer)
                 .build();
+    }
+
+    @Bean
+    public LogEntryProcessor logEntryProcessor() {
+        return new LogEntryProcessor();
     }
 
     @Bean
