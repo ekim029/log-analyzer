@@ -35,6 +35,9 @@ public class LogEntry {
         this.batchId = batchId;
     }
 
+    public Long getId() {
+        return id;
+    }
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
