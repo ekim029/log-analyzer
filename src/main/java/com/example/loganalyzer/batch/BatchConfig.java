@@ -39,11 +39,6 @@ public class BatchConfig {
     }
 
     @Bean
-    public LogEntryProcessor logEntryProcessor() {
-        return new LogEntryProcessor();
-    }
-
-    @Bean
     public RepositoryItemWriter<LogEntry> writer(LogEntryRepository repository) {
         RepositoryItemWriter<LogEntry> writer = new RepositoryItemWriter<>();
         writer.setRepository(repository);
