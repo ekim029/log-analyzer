@@ -15,6 +15,7 @@ public class LogEntry {
     private String level;      // ERROR, INFO, etc.
     private String serverName;
     private String message;
+    private String batchId;
 
     // Constructors
     public LogEntry() {}
@@ -24,6 +25,14 @@ public class LogEntry {
         this.level = level;
         this.serverName = serverName;
         this.message = message;
+    }
+
+    public LogEntry(LocalDateTime timestamp, String level, String serverName, String message, String batchId) {
+        this.timestamp = timestamp;
+        this.level = level;
+        this.serverName = serverName;
+        this.message = message;
+        this.batchId = batchId;
     }
 
     public LocalDateTime getTimestamp() {
@@ -38,6 +47,9 @@ public class LogEntry {
     public String getMessage() {
         return message;
     }
+    public String getBatchId() {
+        return this.batchId;
+    }
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
@@ -50,5 +62,8 @@ public class LogEntry {
     }
     public void setMessage(String message) {
         this.message = message;
+    }
+    public void setBatchId(String batchId) {
+        this.batchId = batchId;
     }
 }
