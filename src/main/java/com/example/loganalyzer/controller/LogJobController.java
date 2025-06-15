@@ -55,7 +55,17 @@ public class LogJobController {
             }
 
             List<LogEntry> entries = repository.findByBatchIdAndLevel(batchId, "ERROR");
+            List<LogEntry> infoEntries = repository.findByBatchIdAndLevel(batchId, "INFO");
+            List<LogEntry> warnEntries = repository.findByBatchIdAndLevel(batchId, "WARN");
+            List<LogEntry> allEntries = repository.findByBatchId(batchId);
             Map<String, Map<String, Object>> response = new HashMap<>();
+
+            Map<String, Object> analytics = new LinkedHashMap<>();
+            analytics.put("totalLogs", allEntries.size());
+            analytics.put("infoLogs", infoEntries.size());
+            analytics.put("warnLogs", warnEntries.size());
+            analytics.put("errorLogs", entries.size());
+            response.put("analytics", analytics);
 
             for (LogEntry entry : entries) {
                 Map<String, Object> fields = new LinkedHashMap<>();

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface LogEntryRepository extends JpaRepository<LogEntry, Long> {
     List<LogEntry> findByBatchIdAndLevel(String batchId, String level);
+    List<LogEntry> findByBatchId(String batchId);
 }
